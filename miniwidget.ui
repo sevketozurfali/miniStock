@@ -33,7 +33,6 @@
     <widget class="QTabWidget" name="tabWidget">
      <property name="styleSheet">
       <string notr="true">font: 12pt &quot;MS Shell Dlg 2&quot;;
-background-color: rgb(85, 85, 127);
 </string>
      </property>
      <property name="currentIndex">
@@ -58,7 +57,7 @@ background-color: rgb(85, 85, 127);
        <property name="title">
         <string>Sipraiş Ekleme</string>
        </property>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>32</x>
@@ -325,28 +324,6 @@ color: rgb(255, 255, 255);</string>
       <attribute name="title">
        <string>Tab 2</string>
       </attribute>
-      <widget class="QTableWidget" name="tableWidget_allOrders">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>1800</width>
-         <height>950</height>
-        </rect>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>1800</width>
-         <height>950</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>1800</width>
-         <height>950</height>
-        </size>
-       </property>
-      </widget>
      </widget>
     </widget>
    </item>

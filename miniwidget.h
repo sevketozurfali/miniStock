@@ -4,6 +4,17 @@
 #include <QWidget>
 #include <QTableWidget>
 #include <qdebug.h>
+#include <QString>
+#include <QStringList>
+#include <QStandardItemModel>
+#include <QTableWidgetItem>
+#include <QTableWidget>
+#include <QCheckBox>
+#include <QHeaderView>
+#include <QSqlDatabase>
+#include <QSqlDriver>
+#include <QSqlError>
+#include <QSqlQuery>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class miniWidget; }
@@ -21,12 +32,18 @@ public:
 
     QTableWidget *currentTableWidget;
 
+    QCheckBox *checkBox;
+
 //    QTableWidgetItem *item;
 
 private slots:
 
     void connections();
     void disconnections();
+
+    void initilization();
+
+    void sqlLiteDatabase_initilization();
 
     void on_pushButton_clicked();
 
@@ -37,6 +54,8 @@ private slots:
     void tab_change(int index);
 
     void show_all_orders();
+
+    void comment(QString message);
 
 signals:
 
