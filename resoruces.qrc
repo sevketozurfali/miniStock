@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/resources">
+        <file>resources/ministock_logo.png</file>
+        <file>resources/db_ministock.db</file>
+    </qresource>
+</RCC>

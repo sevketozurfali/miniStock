@@ -23,23 +23,97 @@ void miniWidget::initilization()
     connections();
 
     currentTableWidget = NULL;
+    isblank = false;
+    ui->lbl_result_add_city->setText("");
+
+    city_name_list = new QStringList();
+
 
     ui->tabWidget->setTabText(0, "Sipariş");
     ui->tabWidget->setTabText(1, "İzleme");
     ui->tabWidget->setCurrentIndex(0);
+
+    get_cities();
+
 }
+
+void miniWidget::on_btn_add_cityname_to_db_clicked()
+{
+    sqlLiteDatabase_initilization();
+
+    if(add_new_city(ui->line_new_city_name->text())){
+        close_database();
+    }
+    else{
+        comment("Error :");
+        qWarning() << db.lastError();
+
+    }
+}
+
 
 void miniWidget::sqlLiteDatabase_initilization()
 {
-    const QString DRIVER("QSLITE");
+    const QString DRIVER("QSQLITE");
 
     if(QSqlDatabase::isDriverAvailable(DRIVER)){
-        QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
-        db.setDatabaseName(":memory:");
+        db = QSqlDatabase::addDatabase(DRIVER);
+        db.setDatabaseName(QCoreApplication::applicationDirPath () + "/db_ministock.db");
+
         if(!db.open()){
             qWarning() << "Error! : " << db.lastError();
         }
+        else
+            comment("Database connection OK." + QCoreApplication::applicationDirPath ());
     }
+
+}
+
+void miniWidget::close_database(){
+    db.close();
+}
+
+
+
+bool miniWidget::add_new_city(QString new_city_name){
+    bool success = false;
+    QSqlQuery query;
+    query.prepare("INSERT INTO CITY_NAMES (NAME) VALUES (:new_city_name)");
+    query.bindValue(":new_city_name", new_city_name);
+    if(query.exec())
+    {
+        success = true;
+        ui->lbl_result_add_city->setText(new_city_name + " başarı ile eklendi.");
+    }
+    else
+    {
+        qDebug() << "Ekleme hatası:"
+                 << query.lastError();
+        ui->lbl_result_add_city->setText(new_city_name + "eklenemedi." + query.lastError().text());
+    }
+
+    return success;
+}
+
+void miniWidget::get_cities(){
+
+    ui->cmb_city->addItem("Şehir Seç...");
+
+    city_name_list->clear();
+    comment("city_name_list count : " + QString::number(city_name_list->size()));
+
+    sqlLiteDatabase_initilization();
+    QSqlQuery query;
+    query.exec("SELECT * FROM CITY_NAMES");
+
+    while (query.next()){
+        QString name = query.value(0).toString();
+        city_name_list->append(name);
+        ui->cmb_city->addItem(name);
+    }
+
+    close_database();
+
 
 }
 
@@ -53,17 +127,10 @@ void miniWidget::disconnections()
 void miniWidget::connections()
 {
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &miniWidget::tab_change);
-}
-
-void miniWidget::on_pushButton_clicked()
-{
 
 }
 
-void miniWidget::on_pushButton_2_clicked()
-{
 
-}
 
 
 void miniWidget::show_all_orders()
@@ -177,7 +244,10 @@ void miniWidget::comment(QString message)
     qDebug() << message;
 }
 
-
+void miniWidget::initilization_siparis()
+{
+//    get_definition_of_product_list();
+}
 
 void miniWidget::on_btn_close_clicked()
 {
@@ -190,4 +260,78 @@ void miniWidget::tab_change(int index)
     if(index == 1){
         show_all_orders();
     }
+    if(index == 0){
+        initilization_siparis();
+    }
 }
+
+bool miniWidget::check_all_blanks_in_order_section(){
+
+    if(ui->line_customer_name->text() == ""){
+        comment("Lütfen Müşteri Adı kutusunu boş bırakmayın...");
+        return false;
+    }
+    else if(ui->cmb_city->currentIndex() == 0){
+        comment("Lütfen Şehir bilgisini ekleyin.");
+        return false;
+    }
+    else if(ui->cmb_definiton_of_product->currentIndex() == 0){
+        comment("Lütfen Ürün Tanımı bilgisini ekleyin.");
+        return false;
+    }
+    else if(ui->cmb_color->currentIndex() == 0){
+        comment("Lütfen Renk bilgisini ekleyin.");
+        return false;
+    }
+    else if(ui->spb_count_of_order->value() == 0){
+        comment("Lütfen sipariş adetini ekleyin.");
+        return false;
+    }
+    else if(!pick_order_date){
+        comment("Lütfen sipariş tarihi bilgisini ekleyin.");
+        return false;
+    }
+    else if(!pick_deadline){
+        comment("Lütfen teslim tarihi bilgisini ekleyin.");
+        return false;
+    }
+    else if(ui->line_salesman->text() == ""){
+        comment("Lütfen satış yapan kişinin bilgisini ekleyin.");
+        return false;
+    }
+    else{
+        comment("All sections has been filled.");
+        return true;
+    }
+}
+
+
+void miniWidget::on_btn_add_clicked()
+{
+    if(check_all_blanks_in_order_section()){
+        comment("add this info.");
+    }
+}
+
+void miniWidget::on_btn_delete_clicked()
+{
+    ui->line_customer_name->setText("");
+    ui->cmb_definiton_of_product->setCurrentIndex(0);
+    ui->cmb_color->setCurrentIndex(0);
+    ui->spb_count_of_order->setValue(0);
+    order_date = "";
+    deadline_date = "";
+    ui->line_salesman->setText("");
+}
+
+void miniWidget::on_btn_pick_order_date_clicked()
+{
+    ui->date_layout->widget()->setVisible(true);
+}
+
+void miniWidget::on_btn_pick_deadline_clicked()
+{
+    ui->date_layout->widget()->setVisible(true);
+}
+
+

@@ -34,7 +34,18 @@ public:
 
     QCheckBox *checkBox;
 
-//    QTableWidgetItem *item;
+    QString order_date;
+    QString deadline_date;
+
+    bool pick_order_date;
+    bool pick_deadline;
+    bool isblank;
+
+    QSqlDatabase db;
+//    QSqlQuery query;
+
+    QStringList *city_name_list;
+
 
 private slots:
 
@@ -43,11 +54,15 @@ private slots:
 
     void initilization();
 
+    bool add_new_city(QString new_city_name);
+
     void sqlLiteDatabase_initilization();
 
-    void on_pushButton_clicked();
+    void close_database();
 
-    void on_pushButton_2_clicked();
+    void get_cities();
+
+//    ----------------------------------------------------------------------------
 
     void on_btn_close_clicked();
 
@@ -56,6 +71,24 @@ private slots:
     void show_all_orders();
 
     void comment(QString message);
+
+    void initilization_siparis();
+
+    void on_btn_add_clicked();
+
+    void on_btn_delete_clicked();
+
+    void on_btn_pick_order_date_clicked();
+
+    void on_btn_pick_deadline_clicked();
+
+    bool check_all_blanks_in_order_section();
+
+
+
+
+
+    void on_btn_add_cityname_to_db_clicked();
 
 signals:
 
